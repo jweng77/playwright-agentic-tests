@@ -30,12 +30,29 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Restore Allure history from gh-pages
+        if: always()
+        run: |
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          if git show-ref --quiet refs/remotes/origin/gh-pages; then
+            git checkout origin/gh-pages -- history 2>/dev/null || true
+            mkdir -p allure-results
+            cp -r history allure-results/history 2>/dev/null || true
+            echo "Allure history restored"
+          else
+            echo "No previous history found, starting fresh"
+          fi
+
       - name: Run Playwright tests
         run: npx playwright test
 
-      - name: Generate Allure report
+      - name: Generate Allure report with history
         if: always()
         run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Copy history into report for next run
+        if: always()
+        run: cp -r allure-report/history allure-results/history 2>/dev/null || true
 
       - name: Upload Allure results (raw)
         uses: actions/upload-artifact@v4
@@ -52,6 +69,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
           publish_branch: gh-pages
+          keep_files: false
 
   k6:
     name: k6 Load Tests (5 VUs)
