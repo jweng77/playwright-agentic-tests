@@ -9,11 +9,19 @@ module.exports = defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 4 : 4,
-  reporter: [['list', { printSteps: true }], ['html', { open: 'never' }]],
+  reporter: [
+    ['list', { printSteps: true }],
+    ['allure-playwright', {
+      detail: true,
+      outputFolder: 'allure-results',
+      suiteTitle: false,
+    }],
+  ],
   use: {
     baseURL: 'https://sauce-demo.myshopify.com/',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: 'on',
+    screenshot: 'on',
+    video: 'on',
     navigationTimeout: 15000,
     actionTimeout: 10000,
     waitForNavigation: 'domcontentloaded',
