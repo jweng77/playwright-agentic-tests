@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
 test.describe('Search', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
   test('search input is present on homepage', async ({ page }) => {
@@ -13,8 +13,10 @@ test.describe('Search', () => {
   test('searching for a product returns results', async ({ page }) => {
     const search = page.locator('input[type="search"], input[name="q"]').first();
     await search.fill('jacket');
-    await search.press('Enter');
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForURL(/search|q=/),
+      search.press('Enter'),
+    ]);
     const bodyText = await page.locator('body').innerText();
     expect(bodyText.toLowerCase()).toContain('jacket');
   });
@@ -22,8 +24,10 @@ test.describe('Search', () => {
   test('search for non-existent product shows no results message', async ({ page }) => {
     const search = page.locator('input[type="search"], input[name="q"]').first();
     await search.fill('xyznonexistentproduct999');
-    await search.press('Enter');
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForURL(/search|q=/),
+      search.press('Enter'),
+    ]);
     const bodyText = await page.locator('body').innerText();
     expect(bodyText.toLowerCase()).toMatch(/no results|no products|0 results/);
   });
@@ -31,15 +35,20 @@ test.describe('Search', () => {
   test('search results page URL contains query', async ({ page }) => {
     const search = page.locator('input[type="search"], input[name="q"]').first();
     await search.fill('jacket');
-    await search.press('Enter');
+    await Promise.all([
+      page.waitForURL(/search.*jacket|q=jacket/),
+      search.press('Enter'),
+    ]);
     await expect(page).toHaveURL(/search.*jacket|q=jacket/);
   });
 
   test('search for "top" returns striped top', async ({ page }) => {
     const search = page.locator('input[type="search"], input[name="q"]').first();
     await search.fill('top');
-    await search.press('Enter');
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForURL(/search|q=/),
+      search.press('Enter'),
+    ]);
     const bodyText = await page.locator('body').innerText();
     expect(bodyText.toLowerCase()).toContain('top');
   });

@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
 test.describe('Product Catalog', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/collections/all');
+    await page.goto('/collections/all', { waitUntil: 'domcontentloaded' });
   });
 
   test('catalog page loads successfully', async ({ page }) => {

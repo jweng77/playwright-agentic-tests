@@ -1,18 +1,22 @@
-import { defineConfig, devices } from '@playwright/test';
+// @ts-check
+const { defineConfig, devices } = require('@playwright/test');
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
-  globalSetup: './tests/global.setup.ts',
-  globalTeardown: './tests/global.teardown.ts',
+  globalSetup: './tests/global.setup.js',
+  globalTeardown: './tests/global.teardown.js',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 4 : undefined,
+  retries: process.env.CI ? 2 : 1,
+  workers: process.env.CI ? 4 : 4,
   reporter: [['list', { printSteps: true }], ['html', { open: 'never' }]],
   use: {
     baseURL: 'https://sauce-demo.myshopify.com/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    navigationTimeout: 15000,
+    actionTimeout: 10000,
+    waitForNavigation: 'domcontentloaded',
   },
   projects: [
     {

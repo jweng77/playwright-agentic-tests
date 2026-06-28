@@ -1,5 +1,5 @@
 async function globalTeardown() {
-  const start = (global as any).__suiteStart;
+  const start = global.__suiteStart;
   if (start) {
     const elapsed = ((Date.now() - start) / 1000).toFixed(2);
     console.log(`\n✅ Test suite finished at ${new Date().toISOString()}`);
@@ -7,4 +7,4 @@ async function globalTeardown() {
   }
 }
 
-export default globalTeardown;
+module.exports = globalTeardown;
