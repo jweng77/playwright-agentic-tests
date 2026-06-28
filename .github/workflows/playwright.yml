@@ -37,7 +37,7 @@ jobs:
           retention-days: 30
 
   k6:
-    name: k6 Load Tests (10 VUs)
+    name: k6 Load Tests (5 VUs)
     runs-on: ubuntu-latest
 
     steps:

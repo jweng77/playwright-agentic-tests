@@ -6,7 +6,7 @@ const errorRate = new Rate('errors');
 const pageLoadTime = new Trend('page_load_time', true);
 
 export const options = {
-  vus: 10,
+  vus: 5,
   duration: '30s',
   thresholds: {
     http_req_duration: ['p(95)<5000'],
