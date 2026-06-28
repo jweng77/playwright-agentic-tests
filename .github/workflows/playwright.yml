@@ -72,6 +72,29 @@ jobs:
           publish_branch: gh-pages
           keep_files: false
 
+  checkly:
+    name: Checkly Deploy
+    runs-on: ubuntu-latest
+    needs: [playwright]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test Checkly checks
+        run: npm run checkly:test
+        env:
+          CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
+          CHECKLY_ACCOUNT_ID: ${{ secrets.CHECKLY_ACCOUNT_ID }}
+
   k6:
     name: k6 Load Tests (5 VUs)
     runs-on: ubuntu-latest

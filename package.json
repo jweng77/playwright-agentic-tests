@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "checkly:test": "checkly test",
+    "checkly:deploy": "checkly deploy --force",
+    "checkly:destroy": "checkly destroy"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,7 @@
     "@playwright/test": "^1.61.1",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2",
+    "checkly": "^8.10.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   }
